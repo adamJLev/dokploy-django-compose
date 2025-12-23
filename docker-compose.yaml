@@ -1,18 +1,22 @@
 services:
-  server:
+  server_blue:
     build: .
-    command: >
-      poetry run gunicorn bananasinc.wsgi:application
-      --bind 0.0.0.0:8000
-      --workers 3
-      --timeout 30
-      --graceful-timeout 30
-    restart: always
-    expose:
-      - "8000"
+    command: gunicorn bananasinc.wsgi:application --bind 0.0.0.0:8000
+    expose: ["8000"]
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.django.loadbalancer.server.port=8000"
+      - "traefik.http.services.django.loadbalancer.weight=1"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/"]
-      interval: 10s
-      timeout: 2s
-      retries: 3
-      start_period: 15s
+
+  server_green:
+    build: .
+    command: gunicorn bananasinc.wsgi:application --bind 0.0.0.0:8000
+    expose: ["8000"]
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.django.loadbalancer.server.port=8000"
+      - "traefik.http.services.django.loadbalancer.weight=0"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
