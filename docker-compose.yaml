@@ -30,7 +30,7 @@ services:
     # 4. Rolling Update Strategy (The Magic)
     deploy:
       mode: replicated
-      replicas: 1 # You can increase this to 2 for higher availability
+      replicas: 2 # You can increase this to 2 for higher availability
       update_config:
         parallelism: 1
         delay: 5s
