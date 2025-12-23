@@ -1,7 +1,18 @@
 services:
   server:
     build: .
-    command: poetry run gunicorn bananasinc.wsgi:application --bind 0.0.0.0:8000
+    command: >
+      poetry run gunicorn config.wsgi:application
+      --bind 0.0.0.0:8000
+      --workers 3
+      --timeout 30
+      --graceful-timeout 30
     restart: always
     expose:
       - "8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 10s
+      timeout: 2s
+      retries: 3
+      start_period: 5s
