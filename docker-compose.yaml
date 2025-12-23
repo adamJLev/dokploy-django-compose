@@ -1,20 +1,17 @@
 services:
   server:
     build: .
-    # 1. Gunicorn Configuration
-    # Ensure graceful-timeout matches or is slightly less than Docker's stop_grace_period
+    # Gunicorn timeout (30s) must be LESS than stop_grace_period (40s)
     command: >
       poetry run gunicorn bananasinc.wsgi:application
       --bind 0.0.0.0:8000
       --workers 3
-      --timeout 5
-      --graceful-timeout 5
+      --timeout 30
+      --graceful-timeout 30
     expose:
       - "8000"
     restart: always
 
-    # 2. Docker Healthcheck (CRITICAL)
-    # Traefik will not route traffic to the new container until this passes
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/"]
       interval: 5s
@@ -22,19 +19,21 @@ services:
       retries: 3
       start_period: 10s
 
-    # 3. Graceful Shutdown (CRITICAL)
-    # Must be longer than Gunicorn's --graceful-timeout (30s)
-    # If this is too short, Docker kills the container while it's still finishing requests (504 Error)
-    stop_grace_period: 10s
+    stop_grace_period: 40s
 
-    # 4. Rolling Update Strategy (The Magic)
     deploy:
       mode: replicated
-      replicas: 2 # You can increase this to 2 for higher availability
+      replicas: 2  # Running 2 copies ensures one is always up
       update_config:
         parallelism: 1
-        delay: 5s
-        # "start-first" spins up the NEW container and waits for healthcheck
-        # BEFORE stopping the old one.
+        delay: 10s
         order: start-first
         failure_action: rollback
+
+    labels:
+      # Middleware to retry requests if they hit a dying container (fixes 502s)
+      - "traefik.http.middlewares.my-retry.retry.attempts=5"
+      - "traefik.http.middlewares.my-retry.retry.initialinterval=100ms"
+      # Apply the middleware to your router (Dokploy typically names routers based on service name)
+      # You might need to verify the router name in Dokploy dashboard -> Traefik
+      - "traefik.http.routers.django-app-vzj2mi-8-web.middlewares=my-retry"
