@@ -2,7 +2,7 @@ services:
   server:
     build: .
     command: >
-      poetry run gunicorn config.wsgi:application
+      poetry run gunicorn bananasinc.wsgi:application
       --bind 0.0.0.0:8000
       --workers 3
       --timeout 30
