@@ -1,7 +1,7 @@
 services:
   server:
     build: .
-    command: poetry run python manage.py runserver
+    command: poetry run gunicorn bananasic.wsgi:application --bind 0.0.0.0:8000
     restart: always
-#    ports:
-#      - 80:8000
+    expose:
+      - "8000"
