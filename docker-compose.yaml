@@ -1,7 +1,7 @@
 services:
   server:
     build: .
-    command: poetry run gunicorn bananasic.wsgi:application --bind 0.0.0.0:8000
+    command: poetry run gunicorn bananasinc.wsgi:application --bind 0.0.0.0:8000
     restart: always
     expose:
       - "8000"
