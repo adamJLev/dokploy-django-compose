@@ -1,0 +1,8 @@
+[tool.poetry]
+name = "deploy-django-compose"
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = ">=3.13 <3.14"
+django = "5.2.9"
