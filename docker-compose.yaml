@@ -1,8 +1,6 @@
 services:
   server:
     build: .
-    entrypoint: >
-      poetry run python manage.py check --deploy >/dev/null
     command: >
       poetry run gunicorn bananasinc.wsgi:application
       --bind 0.0.0.0:8000
