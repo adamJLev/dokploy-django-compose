@@ -6,8 +6,8 @@ services:
       poetry run gunicorn bananasinc.wsgi:application
       --bind 0.0.0.0:8000
       --workers 3
-      --timeout 30
-      --graceful-timeout 30
+      --timeout 10
+      --graceful-timeout 10
     expose:
       - "8000"
     restart: always
@@ -19,21 +19,21 @@ services:
       retries: 3
       start_period: 10s
 
-    stop_grace_period: 40s
+    stop_grace_period: 30s
 
-    deploy:
-      mode: replicated
-      replicas: 2  # Running 2 copies ensures one is always up
-      update_config:
-        parallelism: 1
-        delay: 10s
-        order: start-first
-        failure_action: rollback
-
-    labels:
-      # Middleware to retry requests if they hit a dying container (fixes 502s)
-      - "traefik.http.middlewares.my-retry.retry.attempts=5"
-      - "traefik.http.middlewares.my-retry.retry.initialinterval=100ms"
-      # Apply the middleware to your router (Dokploy typically names routers based on service name)
-      # You might need to verify the router name in Dokploy dashboard -> Traefik
-      - "traefik.http.routers.django-app-vzj2mi-8-web.middlewares=my-retry"
+#    deploy:
+#      mode: replicated
+#      replicas: 2  # Running 2 copies ensures one is always up
+#      update_config:
+#        parallelism: 1
+#        delay: 10s
+#        order: start-first
+#        failure_action: rollback
+#
+#    labels:
+#      # Middleware to retry requests if they hit a dying container (fixes 502s)
+#      - "traefik.http.middlewares.my-retry.retry.attempts=5"
+#      - "traefik.http.middlewares.my-retry.retry.initialinterval=100ms"
+#      # Apply the middleware to your router (Dokploy typically names routers based on service name)
+#      # You might need to verify the router name in Dokploy dashboard -> Traefik
+#      - "traefik.http.routers.django-app-vzj2mi-8-web.middlewares=my-retry"
