@@ -3,5 +3,5 @@ services:
     build: .
     command: poetry run python manage.py runserver
     restart: always
-    ports:
-      - 80:8000
+#    ports:
+#      - 80:8000
