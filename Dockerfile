@@ -37,6 +37,4 @@ RUN poetry install --only=main --no-interaction --no-ansi --no-root
 # Copy project
 COPY --chown=appuser:appuser . /app
 
-# Make scripts executable
-RUN chmod +x *.sh
 
