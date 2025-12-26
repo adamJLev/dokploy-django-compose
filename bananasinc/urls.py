@@ -24,6 +24,6 @@ def test_view(request):
     return HttpResponse(test_value)
 
 urlpatterns = [
-    path('', test_view, name='test'),
+    # path('', test_view, name='test'),
     path('admin/', admin.site.urls),
 ]
